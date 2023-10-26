@@ -67,7 +67,6 @@ public class BookService {
      * @return returns the total book quantity from both orders and books repositories.
      */
     public int limitedEditionBook(String title){
-        int LimitedEditionQuantity = 0;
         Optional<Book> limitedBook = bookRepository.findByTitle(title);
 
         if (!limitedBook.isPresent())

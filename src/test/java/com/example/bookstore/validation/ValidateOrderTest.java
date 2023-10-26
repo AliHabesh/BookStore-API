@@ -1,5 +1,6 @@
 package com.example.bookstore.validation;
 
+import com.example.bookstore.exceptions.CustomException;
 import com.example.bookstore.model.Book;
 import com.example.bookstore.model.Order;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ class ValidateOrderTest {
     @Test
     void invalidOrderThrowsException() {
         ValidateOrder validateOrder = new ValidateOrder();
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(CustomException.class, () -> {
              validateOrder.validateOrderData(new Order(25, "", List.of(new Book("Harry Potter", 22, 2))));
         });
     }

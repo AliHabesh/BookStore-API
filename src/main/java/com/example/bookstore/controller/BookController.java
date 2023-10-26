@@ -40,12 +40,7 @@ public class BookController {
     })
     @PostMapping("restock")
     public ResponseEntity<List<Book>> restockAllBooksByTen(){
-        try{
-            return ResponseEntity.ok(bookService.restockBooksByTen());
-        }catch (CustomException e){
-            throw e;
-        }
-
+        return ResponseEntity.ok(bookService.restockBooksByTen());
     }
 
     @Operation(summary = "Restock a specified books with user input value, the value has to be a multiple of 10")
@@ -60,11 +55,7 @@ public class BookController {
     })
     @PostMapping("/restock/{bookTitle}/{quantity}")
     public ResponseEntity<Book> restockBookById(@PathVariable("bookTitle") String bookTitle, @PathVariable("quantity") int quantity){
-        try{
-            return ResponseEntity.ok(bookService.restockBook(quantity, bookTitle));
-        }catch (CustomException e){
-            throw e;
-        }
+        return ResponseEntity.ok(bookService.restockBook(quantity, bookTitle));
     }
 
     //For simplicity, I went with a controller-level custom exception.

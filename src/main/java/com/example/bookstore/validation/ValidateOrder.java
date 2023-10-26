@@ -16,49 +16,44 @@ public class ValidateOrder {
 
     /**
      * @param order
-     * @return Returns the order if it's valid. In case of invalid order, method throws IllegalArgumentException.
+     * @return Returns the order if it's valid. In case of invalid order, method throws CustomException.
      */
     public Order validateOrderData(Order order){
-        if (containsDuplicate(order))
-            throw new CustomException("duplicate fields is not allowed");
-
-        if (orderExceedsCostLimit(order))
-            throw new CustomException("Order exceeds the cost limit of 120$");
-
-        if (orderWithNoEmail(order))
-            throw new CustomException("Order must contain email");
-
+        containsDuplicate(order);
+        orderExceedsCostLimit(order);
+        orderWithNoEmail(order);
         return order;
     }
 
     /***
-     * @return True if list contains duplicate, false otherwise.
+     * HashSet doesn't store duplicate data, therefore if Set is smaller it means the bookList had duplicate data.
      * @Performance The method has time complexity of O(N log N)
      */
-    private boolean containsDuplicate(Order order){
+    private void containsDuplicate(Order order){
         List<Book> bookList = order.getBooks();
-        Set<Book> bookSet = new HashSet<>();
-        for (Book book : bookList) {
-            bookSet.add(book);
-        }
-        return bookSet.size() < bookList.size(); //If bookSet has a smaller size than the list, then there must have been duplicate data.
+        Set<Book> bookSet = new HashSet<>(bookList);
+        if (bookSet.size() < bookList.size())
+            throw new CustomException("duplicate fields is not allowed");
     }
 
     /**
+     * Cost limit is at 120$
      * @param order
-     * @return true if order exceeds cost limit of 120$.
      */
-    private boolean orderExceedsCostLimit(Order order){
+    private void orderExceedsCostLimit(Order order){
         List<Book> bookList = order.getBooks();
         int totalOrderPrice = 0;
         for (Book book : bookList) {
             totalOrderPrice += book.getCost();
         }
-        return totalOrderPrice > 120;
+
+        if (totalOrderPrice > 120)
+            throw new CustomException("Order exceeds the cost limit of 120$");
     }
 
-    private boolean orderWithNoEmail(Order order){
-        return order.getEmail().isEmpty();
+    private void orderWithNoEmail(Order order){
+        if (order.getEmail().isEmpty())
+            throw new CustomException("Order must contain email");
     }
 
 

@@ -14,6 +14,8 @@ import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -34,19 +36,15 @@ public class OrderController {
             @ApiResponse(responseCode = "200",
                     description = "Order was found",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Order.class)) }),
+                            schema = @Schema(implementation = OrderDTO.class)) }),
             @ApiResponse(responseCode = "500",
                     description = "Order was not found or input invalid",
                     content = @Content)
     })
     @GetMapping("/{email}/{orderUID}")
     public ResponseEntity<OrderDTO> getCustomerOrder(@PathVariable("email") String email, @PathVariable("orderUID") String uid) {
-        try {
-            Optional<OrderDTO> order = orderService.getOrder(email, uid);
-            return ResponseEntity.ok(order.get());
-        } catch (CustomException e) {
-            throw e;
-        }
+        Optional<OrderDTO> order = orderService.getOrder(email, uid);
+        return ResponseEntity.ok(order.get());
     }
 
     @Operation(summary = "Creates order")
@@ -54,20 +52,15 @@ public class OrderController {
             @ApiResponse(responseCode = "200",
                     description = "Order was created!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Order.class)) }),
+                            schema = @Schema(implementation = OrderDTO.class)) }),
             @ApiResponse(responseCode = "500",
                     description = "Order was not created",
                     content = @Content)
     })
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO){
-        try{
-            Optional<OrderDTO> order = orderService.addOrder(orderDTO);
-            return ResponseEntity.ok(order.get());
-        }catch (CustomException e){
-            throw e;
-        }
-
+        Optional<OrderDTO> order = orderService.addOrder(orderDTO);
+        return ResponseEntity.ok(order.get());
     }
 
 

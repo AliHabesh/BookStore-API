@@ -38,7 +38,7 @@ public class OrderService {
         return Optional.of(orderDTO);
     }
 
-    @Transactional(rollbackOn = CustomException.class)
+    @Transactional
     public Optional<OrderDTO> addOrder(OrderDTO orderDTO) {
         Order order = convertOrderDTOToOrder(orderDTO);
         if (order.getBooks().isEmpty()) {
@@ -58,7 +58,7 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(orderValidated);
         reduceBookQuantity(order.getBooks(), orderDTO);
-        OrderDTO orderDTO1 = new OrderDTO(order.getTotalPrice(), order.getEmail(), order.getUid(), convertBookToBookDTO(order.getBooks()));
+        OrderDTO orderDTO1 = new OrderDTO(savedOrder.getTotalPrice(), savedOrder.getEmail(), savedOrder.getUid(), convertBookToBookDTO(savedOrder.getBooks()));
 
         return Optional.of(orderDTO1);
     }
@@ -89,7 +89,7 @@ public class OrderService {
      */
     //Could have used other means, such as mapstruct, also should be in another custom class specifically for mapping DTO -> Obj.
     // For simplicity, this should be enough.
-    private Order convertOrderDTOToOrder(OrderDTO orderDTO){
+    public Order convertOrderDTOToOrder(OrderDTO orderDTO){
         Order order = new Order();
         int cost = 0;
         List<Book> books = new ArrayList<>();
@@ -106,12 +106,10 @@ public class OrderService {
             }
         }
         order.setBooks(books);
-        System.out.println("Here is the cost: "+cost);
         if (cost>120)
             throw new CustomException("Price exceeds limit");
 
         order.setTotalPrice(cost);
-        System.out.println(order);
         return order;
     }
 
